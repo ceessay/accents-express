@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 import Gio from 'gi://Gio';
 import GLib from 'gi://GLib';
 
@@ -13,7 +14,7 @@ export class GtkTheme {
         this._a11y.connectObject('changed::high-contrast', () => this._schedule(), this);
         const gtkDir = Gio.File.new_for_path(GLib.build_filenamev([GLib.get_user_config_dir(), 'gtk-4.0']));
         this._monitor = gtkDir.monitor_directory(Gio.FileMonitorFlags.NONE, null);
-        this._monitor.connect('changed', () => this._schedule());
+        this._monitorId = this._monitor.connect('changed', () => this._schedule());
         this._schedule();
     }
 
@@ -55,6 +56,7 @@ export class GtkTheme {
     destroy() {
         if (this._timer)
             GLib.source_remove(this._timer);
+        this._monitor.disconnect(this._monitorId);
         this._monitor.cancel();
         this._settings.disconnectObject(this);
         this._a11y.disconnectObject(this);

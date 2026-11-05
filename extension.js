@@ -1,3 +1,4 @@
+// SPDX-License-Identifier: GPL-2.0-or-later
 import Clutter from 'gi://Clutter';
 import GLib from 'gi://GLib';
 import St from 'gi://St';
@@ -53,6 +54,8 @@ export default class AccentsExpress extends Extension {
         global.display.disconnectObject(this);
         this._hooks.clear();
         this._theme.destroy();
+        this._theme = null;
+        this._hooks = null;
         this._colors = null;
         this._originalFilter = null;
         this._im = null;

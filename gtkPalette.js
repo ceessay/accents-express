@@ -1,3 +1,5 @@
+#!@GJS@ -m
+// SPDX-License-Identifier: GPL-2.0-or-later
 // Read computed GTK colors in a separate process. GNOME Shell renders with St.
 import Adw from 'gi://Adw?version=1';
 import Gio from 'gi://Gio';
