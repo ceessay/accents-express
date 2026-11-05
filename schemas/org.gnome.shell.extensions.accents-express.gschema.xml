@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+  <schema id="org.gnome.shell.extensions.accents-express" path="/org/gnome/shell/extensions/accents-express/">
+    <key name="activation-mode" type="s">
+      <choices><choice value="hold"/><choice value="shortcut"/></choices>
+      <default>'hold'</default>
+      <summary>Geste d’ouverture de la palette</summary>
+    </key>
+    <key name="shortcut" type="(uu)">
+      <default>(32, 0)</default>
+      <summary>Symbole de touche et modificateurs du raccourci</summary>
+    </key>
+  </schema>
+</schemalist>

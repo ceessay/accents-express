@@ -1,9 +1,10 @@
 {
   "uuid": "accents-express@ceessay.github.io",
   "name": "Accents express",
-  "description": "Maintenez une lettre pour choisir sa variante accentuée sous Wayland. Parcourez les variantes avec les flèches ou Espace, puis relâchez pour insérer la lettre. La palette suit le thème GTK de la session.",
+  "description": "Choisissez un accent sous Wayland par appui long ou avec un raccourci personnalisable. Répétez le raccourci pour passer à la variante suivante, puis relâchez la lettre pour valider. La palette suit le thème GTK.",
   "shell-version": [
     "50"
   ],
-  "url": "https://github.com/ceessay/accents-express"
+  "url": "https://github.com/ceessay/accents-express",
+  "settings-schema": "org.gnome.shell.extensions.accents-express"
 }

@@ -2,16 +2,7 @@
 
 L’identifiant public est `accents-express@ceessay.github.io`. Conservez-le pour les mises à jour.
 
-## Publier le dépôt source
-
-Le champ `url` de `metadata.json` vise `https://github.com/ceessay/accents-express`. Depuis la racine du dépôt local, si le dépôt distant reste à créer, connectez-vous avec le compte GitHub `ceessay` puis exécutez :
-
-```sh
-gh auth login
-gh repo create ceessay/accents-express --public --source=. --remote=origin --push
-```
-
-Vérifiez que l’URL du dépôt est accessible dans une fenêtre de navigation privée avant la soumission.
+Le code et les signalements de problèmes sont disponibles sur le [dépôt public](https://github.com/ceessay/accents-express).
 
 ## Envoyer l’archive
 
@@ -19,7 +10,7 @@ Construisez le ZIP avec la commande du README. Sur [GNOME Extensions](https://ex
 
 ### Note technique pour la revue
 
-> Accents express adds press-and-hold accented letters to compatible Wayland text fields on GNOME Shell 50. While enabled, it temporarily wraps the Shell input method’s key filter and focus/reset handlers. A short tap goes through the original filter. A long press opens the picker and commits the selected character to the active field. Password and sensitive fields are excluded. Disabling the extension restores the original methods. Keystrokes are processed in memory and are neither logged nor sent over the network.
+> Accents express adds press-and-hold accented letters to compatible Wayland text fields on GNOME Shell 50. While enabled, it temporarily wraps the Shell input method’s key filter and focus/reset handlers. A short tap goes through the original filter. In the default mode a long press opens the picker. In shortcut mode the user holds the base letter and presses a configurable key or combination to open the picker. Each additional press advances one candidate. Releasing the letter commits the current choice. The GTK preferences window stores the mode and shortcut in per-user GSettings. Password and sensitive fields are excluded. Disabling the extension restores the original methods. Keystrokes are processed in memory and are neither logged nor sent over the network.
 >
 > The bundled GJS helper reads the active GTK 4 palette in a separate process, so GTK is never imported into GNOME Shell. It takes no keyboard input and exits after printing four colors. It runs at startup and when appearance settings or GTK configuration files change.
 

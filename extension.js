@@ -15,7 +15,14 @@ const holdMs = 450;
 const {KEY_PRESS, KEY_RELEASE} = Clutter.EventType;
 const {NORMAL, ALPHA, NAME, URL, EMAIL} = Clutter.InputContentPurpose;
 const {HIDDEN_TEXT, SENSITIVE_DATA} = Clutter.InputContentHintFlags;
-const {SHIFT_MASK, LOCK_MASK, MOD2_MASK} = Clutter.ModifierType;
+const {SHIFT_MASK, LOCK_MASK, CONTROL_MASK, MOD1_MASK, MOD2_MASK, MOD4_MASK, SUPER_MASK} =
+    Clutter.ModifierType;
+const shortcutModifiers = new Map([
+    [Clutter.KEY_Control_L, CONTROL_MASK], [Clutter.KEY_Control_R, CONTROL_MASK],
+    [Clutter.KEY_Shift_L, SHIFT_MASK], [Clutter.KEY_Shift_R, SHIFT_MASK],
+    [Clutter.KEY_Alt_L, MOD1_MASK], [Clutter.KEY_Alt_R, MOD1_MASK],
+    [Clutter.KEY_Super_L, SUPER_MASK], [Clutter.KEY_Super_R, SUPER_MASK],
+]);
 
 export default class AccentsExpress extends Extension {
     enable() {
@@ -24,6 +31,14 @@ export default class AccentsExpress extends Extension {
             if (this._bar)
                 this._highlight();
         });
+        this._settings = this.getSettings();
+        this._settings.connectObject('changed', () => {
+            if (this._pending && !this._bar && this._eligible())
+                this._replay();
+            this._cancel();
+            this._readSettings();
+        }, this);
+        this._readSettings();
         this._hooks = new InjectionManager();
         this._swallow = new Set();
         this._im = Main.inputMethod;
@@ -52,6 +67,8 @@ export default class AccentsExpress extends Extension {
             this._replay();
         this._cancel();
         global.display.disconnectObject(this);
+        this._settings.disconnectObject(this);
+        this._settings = null;
         this._hooks.clear();
         this._theme.destroy();
         this._theme = null;
@@ -59,6 +76,30 @@ export default class AccentsExpress extends Extension {
         this._colors = null;
         this._originalFilter = null;
         this._im = null;
+    }
+
+    _readSettings() {
+        this._shortcutMode = this._settings.get_string('activation-mode') === 'shortcut';
+        [this._triggerKey, this._triggerMask] = this._settings.get_value('shortcut').deepUnpack();
+    }
+
+    _matchesShortcut(event) {
+        let mask = event.get_state() & (SHIFT_MASK | CONTROL_MASK | MOD1_MASK | SUPER_MASK);
+        if (event.get_state() & MOD4_MASK)
+            mask |= SUPER_MASK;
+        // A Shift held for the base letter (e.g. É) also allows an unshifted shortcut.
+        if (this._pending.shifted && !(this._triggerMask & SHIFT_MASK))
+            mask &= ~SHIFT_MASK;
+        if (mask !== this._triggerMask)
+            return false;
+        const sym = event.get_key_symbol();
+        if (sym === this._triggerKey)
+            return true;
+        const unicode = Clutter.keysym_to_unicode(sym);
+        if (!unicode)
+            return false;
+        const lower = String.fromCodePoint(unicode).toLowerCase();
+        return Clutter.unicode_to_keysym(lower.codePointAt(0)) === this._triggerKey;
     }
 
     _eligible() {
@@ -101,6 +142,19 @@ export default class AccentsExpress extends Extension {
             }
             if (release)
                 return false;
+            if (this._shortcutMode) {
+                if (this._matchesShortcut(event)) {
+                    if (this._bar)
+                        this._step(1);
+                    else
+                        this._open();
+                    // Auto-repeat must not count as another physical press.
+                    this._swallow.add(code);
+                    return this._eat(event);
+                }
+                if (shortcutModifiers.get(sym) & this._triggerMask)
+                    return false;
+            }
             if (this._bar && !(event.get_state() & ~(SHIFT_MASK | LOCK_MASK | MOD2_MASK)) &&
                 this._select(sym, code))
                 return this._eat(event);
@@ -114,8 +168,11 @@ export default class AccentsExpress extends Extension {
             return false;
         this._pending = {
             code, event: event.copy(), focus: this._im.currentFocus,
+            shifted: Boolean(event.get_state() & SHIFT_MASK),
             options: Array.from(char === char.toUpperCase() ? variants.toUpperCase() : variants),
         };
+        if (this._shortcutMode)
+            return this._eat(event);
         this._timer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, holdMs, () => {
             this._timer = 0;
             if (this._eligible() && this._im.currentFocus === this._pending.focus)
@@ -141,12 +198,16 @@ export default class AccentsExpress extends Extension {
             this._im.notify_key_event(pending.event, false);
     }
 
+    _step(direction) {
+        const count = this._pending.options.length;
+        this._index = (this._index + count + direction) % count;
+        this._highlight();
+    }
+
     _select(sym, code) {
         const count = this._pending.options.length;
         if ([Clutter.KEY_Left, Clutter.KEY_Right, Clutter.KEY_space].includes(sym)) {
-            const step = sym === Clutter.KEY_Left ? -1 : 1;
-            this._index = (this._index + count + step) % count;
-            this._highlight();
+            this._step(sym === Clutter.KEY_Left ? -1 : 1);
         } else if (sym === Clutter.KEY_Escape) {
             this._swallow.add(this._pending.code);
             this._clear();

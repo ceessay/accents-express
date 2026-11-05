@@ -4,13 +4,27 @@ Accents express ajoute la saisie par appui long aux champs de texte compatibles 
 
 Les flèches et `Espace` parcourent les variantes. Les chiffres choisissent directement une variante, y compris sur la rangée supérieure d’un clavier AZERTY. `Échap` annule le choix. La palette accepte les majuscules et reprend les couleurs du thème GTK 4 actif.
 
+## Choisir le déclenchement
+
+Ouvrez **Extensions → Accents express → Préférences**, ou lancez :
+
+```sh
+gnome-extensions prefs accents-express@ceessay.github.io
+```
+
+- **Appui long sur la lettre** est le mode par défaut. Maintenez la lettre pendant 450 ms, parcourez les variantes avec `Espace` ou les flèches et relâchez pour valider.
+- **Raccourci personnalisé** ouvre la palette dès que vous appuyez sur le raccourci tout en maintenant la lettre. Avec le réglage initial `Espace`, maintenez `e`, appuyez une fois sur `Espace` pour afficher **é**, puis une deuxième fois pour choisir **è**. Relâchez `e` pour insérer **è**. Après la dernière variante, un nouvel appui revient à la première.
+- Pour changer de raccourci, cliquez sur le bouton qui affiche sa valeur et pressez la combinaison voulue. Vous pouvez choisir une touche seule comme `Espace` ou `F6`, ou une combinaison comme `Ctrl+F6`. Choisissez une combinaison disponible sur votre bureau.
+
+Les réglages sont appliqués immédiatement et conservés d’une session à l’autre.
+
 ## Construire et installer
 
 Depuis la racine du dépôt, sur un système disposant de GNOME Shell 50, GJS, GTK 4, libadwaita et de la commande `gnome-extensions` :
 
 ```sh
 mkdir -p dist
-gnome-extensions pack . --extra-source=gtkPalette.js --extra-source=theme.js --extra-source=LICENSE --out-dir=dist --force
+gnome-extensions pack . --extra-source=gtkPalette.js --extra-source=theme.js --extra-source=LICENSE --schema=schemas/org.gnome.shell.extensions.accents-express.gschema.xml --out-dir=dist --force
 gnome-extensions install --force dist/accents-express@ceessay.github.io.shell-extension.zip
 ```
 
