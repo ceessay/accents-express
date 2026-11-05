@@ -1,0 +1,11 @@
+.switcher-list.accent-express-bar {
+    padding: 6px;
+    spacing: 3px;
+    border-radius: 12px;
+}
+.accent-express-bar .accent-express-cell {
+    padding: 3px 10px;
+    border-radius: 7px;
+    font-size: 19px;
+}
+.accent-express-number { font-size: 10px; }

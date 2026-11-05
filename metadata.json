@@ -1,0 +1,7 @@
+{
+  "uuid": "accents-express@local",
+  "name": "Accents express",
+  "description": "Maintenez une lettre dans un champ de texte Wayland. Parcourez les accents avec les flèches ou Espace et relâchez la lettre pour valider.",
+  "shell-version": ["50"],
+  "version": 2
+}
