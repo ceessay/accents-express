@@ -11,7 +11,6 @@ const letters = {
     a: 'àâäáãåæ', c: 'çćč', e: 'éèêë', i: 'îïíì',
     n: 'ñń', o: 'ôöœóòõø', u: 'ùûüú', y: 'ÿý',
 };
-const holdMs = 450;
 const {KEY_PRESS, KEY_RELEASE} = Clutter.EventType;
 const {NORMAL, ALPHA, NAME, URL, EMAIL} = Clutter.InputContentPurpose;
 const {HIDDEN_TEXT, SENSITIVE_DATA} = Clutter.InputContentHintFlags;
@@ -79,6 +78,8 @@ export default class AccentsExpress extends Extension {
     }
 
     _readSettings() {
+        this._holdMs = this._settings.get_int('hold-delay-ms');
+        this._shortcutDelayMs = this._settings.get_int('shortcut-delay-ms');
         this._shortcutMode = this._settings.get_string('activation-mode') === 'shortcut';
         [this._triggerKey, this._triggerMask] = this._settings.get_value('shortcut').deepUnpack();
     }
@@ -144,6 +145,11 @@ export default class AccentsExpress extends Extension {
                 return false;
             if (this._shortcutMode) {
                 if (this._matchesShortcut(event)) {
+                    const elapsedMs = (GLib.get_monotonic_time() - this._pending.started) / 1000;
+                    if (!this._bar && elapsedMs < this._shortcutDelayMs) {
+                        this._replay();
+                        return false;
+                    }
                     if (this._bar)
                         this._step(1);
                     else
@@ -167,13 +173,14 @@ export default class AccentsExpress extends Extension {
         if (!variants)
             return false;
         this._pending = {
+            started: GLib.get_monotonic_time(),
             code, event: event.copy(), focus: this._im.currentFocus,
             shifted: Boolean(event.get_state() & SHIFT_MASK),
             options: Array.from(char === char.toUpperCase() ? variants.toUpperCase() : variants),
         };
         if (this._shortcutMode)
             return this._eat(event);
-        this._timer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, holdMs, () => {
+        this._timer = GLib.timeout_add(GLib.PRIORITY_DEFAULT, this._holdMs, () => {
             this._timer = 0;
             if (this._eligible() && this._im.currentFocus === this._pending.focus)
                 this._open();

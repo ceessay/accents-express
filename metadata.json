@@ -3,7 +3,8 @@
   "name": "Accents express",
   "description": "Choisissez un accent sous Wayland par appui long ou avec un raccourci personnalisable. Répétez le raccourci pour passer à la variante suivante, puis relâchez la lettre pour valider. La palette suit le thème GTK.",
   "shell-version": [
-    "50"
+    "50",
+    "51"
   ],
   "url": "https://github.com/ceessay/accents-express",
   "settings-schema": "org.gnome.shell.extensions.accents-express"

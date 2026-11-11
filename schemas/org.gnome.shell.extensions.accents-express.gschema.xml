@@ -6,6 +6,16 @@
       <default>'hold'</default>
       <summary>Geste d’ouverture de la palette</summary>
     </key>
+    <key name="hold-delay-ms" type="i">
+      <range min="100" max="3000"/>
+      <default>450</default>
+      <summary>Durée de l’appui long en millisecondes</summary>
+    </key>
+    <key name="shortcut-delay-ms" type="i">
+      <range min="0" max="3000"/>
+      <default>500</default>
+      <summary>Maintien minimal de la lettre avant le premier raccourci, en millisecondes</summary>
+    </key>
     <key name="shortcut" type="(uu)">
       <default>(32, 0)</default>
       <summary>Symbole de touche et modificateurs du raccourci</summary>

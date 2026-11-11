@@ -1,6 +1,6 @@
 # Accents express
 
-Accents express ajoute la saisie par appui long aux champs de texte compatibles avec la méthode de saisie Wayland de GNOME Shell 50. Maintenez `e` pendant 450 ms pour afficher **é è ê ë**. Relâchez pour écrire **é**, ou appuyez une fois sur `→` avant de relâcher pour écrire **è**.
+Accents express ajoute la saisie par appui long aux champs de texte compatibles avec la méthode de saisie Wayland de GNOME Shell 50 ou 51. Maintenez `e` pendant la durée configurée (450 ms par défaut) pour afficher **é è ê ë**. Relâchez pour écrire **é**, ou appuyez une fois sur `→` avant de relâcher pour écrire **è**.
 
 Les flèches et `Espace` parcourent les variantes. Les chiffres choisissent directement une variante, y compris sur la rangée supérieure d’un clavier AZERTY. `Échap` annule le choix. La palette accepte les majuscules et reprend les couleurs du thème GTK 4 actif.
 
@@ -13,14 +13,18 @@ gnome-extensions prefs accents-express@ceessay.github.io
 ```
 
 - **Appui long sur la lettre** est le mode par défaut. Maintenez la lettre pendant 450 ms, parcourez les variantes avec `Espace` ou les flèches et relâchez pour valider.
-- **Raccourci personnalisé** ouvre la palette dès que vous appuyez sur le raccourci tout en maintenant la lettre. Avec le réglage initial `Espace`, maintenez `e`, appuyez une fois sur `Espace` pour afficher **é**, puis une deuxième fois pour choisir **è**. Relâchez `e` pour insérer **è**. Après la dernière variante, un nouvel appui revient à la première.
+- **Raccourci personnalisé** ouvre la palette après le délai minimal lorsque vous appuyez sur le raccourci tout en maintenant la lettre. Avec le réglage initial `Espace`, maintenez `e`, appuyez une fois sur `Espace` pour afficher **é**, puis une deuxième fois pour choisir **è**. Relâchez `e` pour insérer **è**. Après la dernière variante, un nouvel appui revient à la première.
 - Pour changer de raccourci, cliquez sur le bouton qui affiche sa valeur et pressez la combinaison voulue. Vous pouvez choisir une touche seule comme `Espace` ou `F6`, ou une combinaison comme `Ctrl+F6`. Choisissez une combinaison disponible sur votre bureau.
+
+Le réglage **Délai avant le raccourci** définit le maintien minimal de la lettre avant le premier appui sur le raccourci. Sa valeur initiale est de 500 ms et vous pouvez choisir de 0 à 3 000 ms. En dessous de ce délai, la lettre et le raccourci suivent leur saisie habituelle. Une fois la palette ouverte, chaque appui avance immédiatement à la variante suivante. Vous pouvez maintenir la lettre aussi longtemps que nécessaire avant de demander un accent.
+
+Le réglage **Durée de l’appui long** permet de choisir de 100 à 3 000 ms pour le mode sans raccourci.
 
 Les réglages sont appliqués immédiatement et conservés d’une session à l’autre.
 
 ## Construire et installer
 
-Depuis la racine du dépôt, sur un système disposant de GNOME Shell 50, GJS, GTK 4, libadwaita et de la commande `gnome-extensions` :
+Depuis la racine du dépôt, sur un système disposant de GNOME Shell 50 ou 51, GJS, GTK 4, libadwaita et de la commande `gnome-extensions` :
 
 ```sh
 mkdir -p dist
@@ -39,6 +43,16 @@ Fermez la session GNOME, reconnectez-vous, puis activez l’extension :
 ```sh
 gnome-extensions enable accents-express@ceessay.github.io
 ```
+
+## Applications Chromium et ChatGPT Desktop
+
+Les champs doivent utiliser la méthode de saisie Wayland de GNOME. Si une application Chromium utilise XWayland, activez son lancement Wayland. Pour ChatGPT Desktop, fermez complètement l’application puis relancez-la avec :
+
+```sh
+chatgpt --ozone-platform=wayland --enable-wayland-ime --wayland-text-input-version=3
+```
+
+Ces options peuvent aussi être ajoutées à la ligne `Exec` de son lanceur utilisateur. Le changement de mode d’affichage nécessite un nouveau démarrage de l’application.
 
 ## Fonctionnement
 
